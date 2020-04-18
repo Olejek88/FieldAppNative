@@ -1,0 +1,10 @@
+<tabs xmlns:android="http://schemas.android.com/apk/res/android">
+    <tab
+        id="@+id/menu_channels"
+        icon="@drawable/ic_channels"
+        title="@string/menu_channels" />
+    <tab
+        id="@+id/menu_values"
+        icon="@drawable/ic_chart"
+        title="@string/menu_values" />
+</tabs>

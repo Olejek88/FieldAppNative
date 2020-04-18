@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FieldAppNative</string>
+    <string name="action_settings">Настройки приложения</string>
+    <string name="action_about">О программе</string>
+    <string name="cancel">Отмена</string>
+    <string name="action_update">Обновить приложение</string>
+    <string name="pref_cat_main">Основные</string>
+    <string name="pref_cat_rfid">Настройки устройства</string>
+    <string name="pref_cat_show">Настройки отображения</string>
+    <string name="pref_debug_mode">Отладочный режим</string>
+    <string name="pref_server_url">Сервер системы</string>
+    <string name="pref_server_url_dialog_title">Введите URL сервера системы</string>
+    <string name="login">Войти</string>
+    <string name="find">Найти</string>
+    <string name="serverUrl">serverUrl</string>
+    <string name="back">Назад</string>
+    <string name="ok">ОК</string>
+    <string name="image_description">изображение</string>
+    <string name="description"> </string>
+    <string name="empty"></string>
+    <string name="divider"> | </string>
+    <string name="application_full_name">Дата Сервер</string>
+    <string name="profile_add_name">Имя пользователя</string>
+    <string name="profile_image">Изображение аватар</string>
+    <string name="system_server">Сервер системы</string>
+    <string name="menu">Сменить настройки</string>
+    <string name="menu_gps">Карта</string>
+    <string name="menu_tasks">Задачи</string>
+    <string name="menu_references">Справочники</string>
+    <string name="menu_users">Пользователи</string>
+    <string name="pref_lang">Язык интерфейса</string>
+
+    <string name="tire"> - </string>
+    <string name="sec">сек.</string>
+    <string name="sec_with_value">%1$d сек.</string>
+    <string name="input_value">введите данные</string>
+    <string name="program_version">FieldApp v%1$s\n Оlejek \n (shtrm.ru) (&#169;) 2020</string>
+
+    <string name="journal">Журнал</string>
+    <string name="toirSettings">Настройки приложения</string>
+
+    <string name="advanced_settings">Отображение и данные</string>
+    <string name="menu_channels">Каналы измерения</string>
+    <string name="menu_values">Измерения</string>
+    <string name="menu_enter">Добавить измерение</string>
+    <string name="menu_about_app">О программе</string>
+    <string name="menu_information">Информация о версии</string>
+    <string name="menu_exit">Выход</string>
+
+    <string name="toast_db_actual">База данных актуальна!</string>
+    <string name="toast_db_error">Не удалось открыть/обновить базу данных!</string>
+    <string name="toast_enter">Вход в систему</string>
+    <string name="toast_token_received">Токен получен</string>
+    <string name="toast_error_picture">Не удалось получить масштабированное изображение</string>
+    <string name="toast_error_no_user">Информация о пользователе не получена с сервера</string>
+    <string name="toast_error_no_user_received">Просто не получили пользователя</string>
+    <string name="toast_error_no_token_received">Просто не получили токен</string>
+    <string name="toast_error_no_access">Нет доступа</string>
+    <string name="toast_error_operation_canceled">Операция прервана</string>
+
+    <string name="subtitle_repair">Данные</string>
+    <string name="current_tasks">Текущие задания</string>
+    <string name="sync_data">Синхронизируем данные</string>
+    <string name="please_login">Пожалуйста зарегистрируйтесь</string>
+    <string name="no_driver_select">Драйвер не выбран</string>
+    <string name="no_user_present">Непредвиденная ошибка: нет такого пользователя</string>
+    <string name="gps_must_enabled">GPS должен быть включен</string>
+    <string name="no_url_for_update">Не указан URL для обновления!</string>
+
+    <string name="change_attribute">Изменение атрибута</string>
+    <string name="download_update">Загрузка обновления</string>
+    <string name="update_error">Ошибка при обновлении!</string>
+    <string name="unknown">неизвестен</string>
+    <string name="device_has_no_gps">Устройство не оборудовано приёмником GPS!</string>
+    <string name="cannot_upload_file">Файл не удалось загрузить</string>
+    <string name="measure_values">Измерение параметров</string>
+
+    <string name="lang_ru_text">Русский</string>
+    <string name="lang_de_text">Deutsch</string>
+    <string name="lang_en_text">English</string>
+
+    <string name="lang_ru">ru</string>
+    <string name="lang_de">de</string>
+    <string name="lang_en">en</string>
+
+    <string name="update">Обновление</string>
+    <string name="not_set_server_address">Не указан адрес сервера в настройках приложения!</string>
+    <string name="auth_error">Ошибка аутентификации</string>
+    <string name="no_internet">Нет соединения с Интернетом</string>
+
+    <string name="receive_new_orders">Получить новые наряды</string>
+    <string name="receive_completed_orders">Получить сделанные наряды</string>
+    <string name="send_results">Отправить результаты</string>
+    <string name="warning">Внимание!</string>
+
+    <string name="user_input">Логин пользователя</string>
+    <string name="user_login">Войти</string>
+    <string name="user_pin_default">****</string>
+    <string name="user_pin">Пин-код</string>
+    <string name="login_error">! Ошибка ввода пин-кода для данного пользователя</string>
+</resources>

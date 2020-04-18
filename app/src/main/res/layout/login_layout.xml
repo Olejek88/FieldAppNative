@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/login_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/login_header" />
+
+    <TextView
+        android:id="@+id/login_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/login_header"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/user_input"
+        android:textColor="@color/larisaTextColorABlack"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/user_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_pin_label"
+        android:layout_gravity="start"
+        android:gravity="center_vertical"
+        android:hint="@string/user_pin_default"
+        android:inputType="number"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/user_pin_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/user_select"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#757575"
+        android:layout_marginTop="20dp"
+        android:text="@string/user_pin"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/login_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_pin_label"
+        android:layout_gravity="start"
+        android:gravity="center_vertical"
+        android:hint="@string/user_pin_default"
+        android:inputType="number"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:height="35dp"
+        android:minHeight="0dp"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/login_pin"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickLogin"
+        android:tint="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/md_white_1000"
+        android:text="@string/user_login" />
+
+    <TextView
+        android:id="@+id/login_error"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/loginButton"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/md_white_1000"
+        android:background="@color/md_red_800"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/login_error"
+        android:visibility="gone"
+        android:textSize="14sp" />
+
+</RelativeLayout>

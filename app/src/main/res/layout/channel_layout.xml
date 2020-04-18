@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ChannelInfoActivity"
+    tools:ignore="RtlSymmetry">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/larisaBlueColor"
+        android:gravity="top"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <RelativeLayout
+            android:id="@+id/channel_info_common"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/channel_text_name"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:adjustViewBounds="true"
+                android:background="@color/larisaBlueColor"
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:scaleType="centerCrop"
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+            <ListView
+                android:id="@+id/channel_listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/channel_text_name"
+                android:divider="#333333"
+                android:dividerHeight="1px"
+                android:paddingBottom="10dp" />
+
+        </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:src="@android:drawable/ic_menu_add"
+        app:backgroundTint="@color/larisaBlueColor"
+        app:fabSize="normal" />
+
+</android.support.design.widget.CoordinatorLayout>
