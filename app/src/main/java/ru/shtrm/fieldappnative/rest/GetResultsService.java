@@ -20,7 +20,6 @@ import ru.shtrm.fieldappnative.AuthorizedUser;
 import ru.shtrm.fieldappnative.R;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 import ru.shtrm.fieldappnative.db.realm.ReferenceUpdate;
-import ru.shtrm.fieldappnative.fragments.MeasuresFragment;
 
 public class GetResultsService extends Service {
     public static final String ACTION = "ru.shtrm.fieldappnative.rest.GET_ORDERS";
@@ -43,9 +42,6 @@ public class GetResultsService extends Service {
                 finishService();
                 return;
             }
-
-            // обновляем справочники
-            MeasuresFragment.updateReferencesForOrders(context);
 
             // получаем список последних измерений
             String changedDate = ReferenceUpdate.lastChangedAsStr(MeasuredValue.class.getSimpleName());

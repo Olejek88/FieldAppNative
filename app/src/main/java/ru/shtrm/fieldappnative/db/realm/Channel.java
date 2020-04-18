@@ -33,6 +33,18 @@ public class Channel extends RealmObject implements ISend {
         return lastId.longValue();
     }
 
+    public String getLastMeasure() {
+        Realm realm = Realm.getDefaultInstance();
+        MeasuredValue measuredValue = realm.where(MeasuredValue.class).
+                equalTo("channel.uuid", this.getUuid()).
+                sort("createdAt",Sort.DESCENDING).findFirst();
+        if (measuredValue != null) {
+            return measuredValue.getValue().concat(" ").concat(measuredValue.getDate().toString());
+        }
+        realm.close();
+        return "нет измерений";
+    }
+
     public long get_id() {
         return _id;
     }

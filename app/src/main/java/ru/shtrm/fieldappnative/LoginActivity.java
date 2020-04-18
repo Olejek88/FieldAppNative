@@ -239,54 +239,6 @@ public class LoginActivity extends AppCompatActivity {
                                 AuthorizedUser authorizedUser = AuthorizedUser.getInstance();
                                 authorizedUser.setUuid(user.getUuid());
                                 authorizedUser.setLogin(user.getLogin());
-                                // получаем изображение пользователя
-                                if (needDownloadImage) {
-                                    String url = FieldApplication.serverUrl + "/" + user.getImageFileUrl(user.getLogin()) + "/" + user.getImage();
-                                    Call<ResponseBody> callFile = AppAPIFactory.getFileDownload().get(url);
-                                    callFile.enqueue(new Callback<ResponseBody>() {
-                                        @Override
-                                        public void onResponse(Call<ResponseBody> responseBodyCall, Response<ResponseBody> response) {
-                                            ResponseBody fileBody = response.body();
-                                            if (fileBody == null) {
-                                                return;
-                                            }
-
-                                            File filePath = getExternalFilesDir("/" + User.getImageRoot());
-                                            if (filePath == null) {
-                                                // нет доступа к внешнему накопителю
-                                                return;
-                                            }
-
-                                            File file = new File(filePath, fileName);
-                                            if (!file.getParentFile().exists()) {
-                                                if (!file.getParentFile().mkdirs()) {
-                                                    return;
-                                                }
-                                            }
-
-                                            try {
-                                                FileOutputStream fos = new FileOutputStream(file);
-                                                fos.write(fileBody.bytes());
-                                                fos.close();
-                                                // принудительно масштабируем изображение пользоваетеля
-                                                String path = filePath + File.separator;
-                                                Bitmap user_bitmap = getResizedBitmap(path, fileName, 0, 600, Long.MAX_VALUE);
-                                                if (user_bitmap == null) {
-                                                    // По какой-то причине не смогли получить
-                                                    // уменьшенное изображение
-                                                    Log.e("Login", getString(R.string.toast_error_picture));
-                                                }
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ResponseBody> responseBodyCall, Throwable t) {
-                                            t.printStackTrace();
-                                        }
-                                    });
-                                }
                                 realm.close();
                                 setResult(RESULT_OK);
                                 finish();

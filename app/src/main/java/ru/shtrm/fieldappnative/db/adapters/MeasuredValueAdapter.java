@@ -47,12 +47,6 @@ public class MeasuredValueAdapter extends RealmBaseAdapter<MeasureType> implemen
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            if (parent.getId() == R.id.reference_listView) {
-                convertView = inflater.inflate(R.layout.listview, parent, false);
-                viewHolder.title = convertView.findViewById(R.id.lv_firstLine);
-                convertView.setTag(viewHolder);
-            }
-
             if (parent.getId() == R.id.simple_spinner) {
                 convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
                 viewHolder.title = convertView.findViewById(android.R.id.text1);

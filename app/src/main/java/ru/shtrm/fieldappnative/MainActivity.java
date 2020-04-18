@@ -35,7 +35,6 @@ import java.util.Locale;
 
 import io.realm.Realm;
 import ru.shtrm.fieldappnative.fragments.ChannelsFragment;
-import ru.shtrm.fieldappnative.fragments.MeasuresFragment;
 import ru.shtrm.fieldappnative.fragments.SettingsFragment;
 import ru.shtrm.fieldappnative.rest.ForegroundService;
 
@@ -183,10 +182,12 @@ public class MainActivity extends AppCompatActivity {
                         currentFragment = FRAGMENT_CHANNELS;
                         tr.replace(R.id.frame_container, ChannelsFragment.newInstance());
                         break;
+/*
                     case R.id.menu_values:
                         currentFragment = FRAGMENT_LAST_VALUES;
                         tr.replace(R.id.frame_container, MeasuresFragment.newInstance());
                         break;
+*/
                 }
 
                 tr.commit();

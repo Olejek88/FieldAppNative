@@ -1,38 +1,28 @@
 package ru.shtrm.fieldappnative;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
+import android.graphics.Color;
+import android.icu.util.Measure;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -42,16 +32,19 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 
-import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import ru.shtrm.fieldappnative.db.realm.Channel;
+import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class ChannelInfoActivity extends AppCompatActivity {
+    protected BarChart mChart;
+
     private final static String TAG = "ChannelInfoActivity";
     private static final int DRAWER_INFO = 13;
     private static final int DRAWER_EXIT = 14;
@@ -92,7 +85,6 @@ public class ChannelInfoActivity extends AppCompatActivity {
 
         tv_channel_name = findViewById(R.id.channel_text_name);
         tv_channel_listview = findViewById(R.id.channel_listView);
-
         initView();
     }
 
@@ -162,11 +154,83 @@ public class ChannelInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
             }
         });
+        initChart();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         realmDB.close();
+    }
+
+    void initChart() {
+        mChart = findViewById(R.id.chart1);
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawValueAboveBar(true);
+        mChart.setMaxVisibleValueCount(30);
+        mChart.setPinchZoom(false);
+        mChart.setDrawGridBackground(false);
+        mChart.getDescription().setEnabled(false);
+        mChart.getLegend().setEnabled(false);
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setDrawLabels(false);
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setLabelCount(8);
+        rightAxis.setTextColor(Color.WHITE);
+        rightAxis.setSpaceTop(15f);
+        setData();
+    }
+
+    private void setData() {
+        int count;
+        ArrayList<String> xVals = new ArrayList<>();
+        XAxis xAxis = mChart.getXAxis();
+
+        List<MeasuredValue> measures = realmDB.where(MeasuredValue.class).equalTo("uuid", channel_uuid).findAll();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM", Locale.US);
+        count = measures.size();
+        for (int i = 0; i < count; i++) {
+            MeasuredValue val = measures.get(i);
+            if (val != null) {
+                Date dateVal = val.getDate();
+                if (dateVal != null) {
+                    xVals.add(simpleDateFormat.format(dateVal));
+                } else {
+                    xVals.add("00.00");
+                }
+            }
+        }
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(xVals));
+
+        List<BarEntry> yVals = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            if (measures.get(i)!=null) {
+                yVals.add(new BarEntry(i, Float.parseFloat(measures.get(i).getValue())));
+            }
+        }
+
+        BarDataSet set1 = new BarDataSet(yVals, "DataSet");
+        //set1.setBarSpacePercent(35f);
+        BarData data = new BarData(set1);
+        data.setValueTextSize(10f);
+        mChart.setData(data);
+    }
+
+    public class MyXAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+        private ArrayList<String> mValues;
+
+        MyXAxisValueFormatter(ArrayList<String> values) {
+            this.mValues = values;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return mValues.get((int) value);
+        }
     }
 }

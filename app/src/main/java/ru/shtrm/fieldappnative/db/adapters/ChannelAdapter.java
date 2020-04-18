@@ -15,6 +15,7 @@ import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import ru.shtrm.fieldappnative.R;
 import ru.shtrm.fieldappnative.db.realm.Channel;
+import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class ChannelAdapter extends RealmBaseAdapter<Channel> implements ListAdapter {
 
@@ -50,73 +51,25 @@ public class ChannelAdapter extends RealmBaseAdapter<Channel> implements ListAda
         ViewHolder viewHolder;
         viewHolder = new ChannelAdapter.ViewHolder();
         if (convertView == null) {
-            if (parent.getId() == R.id.spinner_channel) {
-                convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-                viewHolder.title = convertView.findViewById(android.R.id.text1);
-                convertView.setTag(viewHolder);
-            } else {
-                convertView = inflater.inflate(R.layout.defect_item_layout, parent, false);
+                convertView = inflater.inflate(R.layout.channel_item_layout, parent, false);
                 viewHolder = new ChannelAdapter.ViewHolder();
-                viewHolder.title = convertView.findViewById(R.id.defect_title);
-                viewHolder.equipment = convertView.findViewById(R.id.defect_equipment);
-                viewHolder.date = convertView.findViewById(R.id.defect_date);
-                viewHolder.status = convertView.findViewById(R.id.defect_status);
-                viewHolder.image_status = convertView.findViewById(R.id.defect_status_image);
-                viewHolder.image_defect = convertView.findViewById(R.id.defect_image);
+                viewHolder.measure_type = convertView.findViewById(R.id.channel_measure_type);
+                viewHolder.last_value = convertView.findViewById(R.id.channel_last_value);
+                viewHolder.title = convertView.findViewById(R.id.channel_title);
                 convertView.setTag(viewHolder);
-            }
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Channel defect;
+        Channel channel;
         if (adapterData != null) {
-            defect = adapterData.get(position);
-            if (defect != null) {
-                if (parent.getId() == R.id.spinner_defect_type) {
-                    viewHolder.title.setText(defect.getComment());
-                } else {
-                    if (defect.getDefectType() != null) {
-                        viewHolder.title.setText(defect.getDefectType().getTitle());
-                    } else {
-                        String textData = "новый: " + defect.getComment();
-                        viewHolder.title.setText(textData);
-                        //viewHolder.title.setText("новый");
-                    }
-                    if (defect.getDefectLevel().getUuid().equals(DefectLevel.Level.TYPE_WARNING)) {
-                        viewHolder.image_status.setImageResource(R.drawable.status_mod_work);
-                    }
-                    if (defect.getDefectLevel().getUuid().equals(DefectLevel.Level.TYPE_INFO)) {
-                        viewHolder.image_status.setImageResource(R.drawable.status_easy_work);
-                    }
-                    viewHolder.status.setText(defect.getDefectLevel().getTitle());
-
-                    java.util.Date date = defect.getDate();
-                    if (date != null) {
-                        String sDate = new SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.US)
-                                .format(date);
-                        viewHolder.date.setText(defect.getUser().getName().concat(" [").concat(sDate).concat("]"));
-                    }
-
-                    if (defect.getUser() != null) {
-                        viewHolder.equipment.setText(defect.getEquipment().getTitle());
-                    }
-                    // TODO 27_12_2019 При скролле криво отображаются миниатюры фото
-/*
-                    MediaFile mediaFile = defect.getMediaFile();
-                    if (mediaFile != null) {
-                        File path = context.getExternalFilesDir(mediaFile.getPath());
-                        String fileName = mediaFile.getName();
-                        if (path != null && fileName.contains("jpg")) {
-                            Bitmap bm = getResizedBitmap(path + File.separator,
-                                    fileName, 200, 0, mediaFile.getChangedAt().getTime());
-                            if (bm != null) {
-                                viewHolder.image_defect.setImageBitmap(bm);
-                            }
-                        }
-                    }
-*/
+            channel = adapterData.get(position);
+            if (channel != null) {
+                if (channel.getMeasureType() != null) {
+                    viewHolder.measure_type.setText(channel.getMeasureType().getTitle());
                 }
+                viewHolder.title.setText(channel.getTitle());
+                viewHolder.last_value.setText(channel.getLastMeasure());
             }
         }
 
@@ -125,12 +78,8 @@ public class ChannelAdapter extends RealmBaseAdapter<Channel> implements ListAda
 
 
     private static class ViewHolder {
-        TextView uuid;
         TextView title;
-        TextView date;
-        TextView equipment;
-        TextView status;
-        ImageView image_status;
-        ImageView image_defect;
+        TextView last_value;
+        TextView measure_type;
     }
 }
