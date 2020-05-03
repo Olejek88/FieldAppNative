@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import ru.shtrm.fieldappnative.rest.AppAPIFactory;
 
 public class Downloader extends AsyncTask<String, Integer, String> {
@@ -36,7 +34,6 @@ public class Downloader extends AsyncTask<String, Integer, String> {
 
     Downloader(ProgressDialog dialog) {
         this.dialog = dialog;
-        HttpsURLConnection.setDefaultSSLSocketFactory(AppAPIFactory.sslsf);
     }
 
     private static boolean isAPK(File file) {

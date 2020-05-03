@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:icon="@drawable/pref_basic"
+        android:key="preferenceBasicScreen"
+        android:title="@string/pref_cat_main">
+
+        <ListPreference
+            android:entries="@array/languages"
+            android:entryValues="@array/language_values"
+            android:icon="@drawable/pref_lang"
+            android:key="@string/langListKey"
+            android:title="@string/pref_lang" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/update">
+        <Preference
+            android:key="updateApp"
+            android:title="@string/action_update" />
+    </PreferenceCategory>
+</PreferenceScreen>

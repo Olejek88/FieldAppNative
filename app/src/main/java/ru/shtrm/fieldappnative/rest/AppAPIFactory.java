@@ -50,11 +50,9 @@ import ru.shtrm.fieldappnative.rest.interfaces.IUserService;
 
 public class
 AppAPIFactory {
-    public static final X509TrustManager tm = getTm();
     private static final int CONNECT_TIMEOUT = 15;
     private static final int WRITE_TIMEOUT = 60;
     private static final int TIMEOUT = 60;
-    public static SSLSocketFactory sslsf = getSslsf();
     private static final OkHttpClient CLIENT = new OkHttpClient()
             .newBuilder()
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
@@ -98,59 +96,8 @@ AppAPIFactory {
                     }
                 }
             })
-            .sslSocketFactory(sslsf, tm)
+            //.sslSocketFactory(sslsf, tm)
             .build();
-
-    private static SSLSocketFactory getSslsf() {
-        SSLSocketFactory value = null;
-        SSLContext context;
-
-        try {
-            value = new TLSSocketFactory(new TrustManager[]{tm});
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-
-        return value;
-    }
-
-    private static AppAPIFactory.UnifiedTrustManager getTm() {
-        InputStream inputStream6 = FieldApplication.digicertsha2CA;
-        KeyStore keyStore = null;
-        AppAPIFactory.UnifiedTrustManager trustManager = null;
-        try {
-            // Load CAs from an InputStream
-            // (could be from a resource or ByteArrayInputStream or ...)
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream caInput6 = new BufferedInputStream(inputStream6);
-            Certificate ca6;
-            try {
-                ca6 = cf.generateCertificate(caInput6);
-            } finally {
-            }
-
-            // Create a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca6", ca6);
-            trustManager = new AppAPIFactory.UnifiedTrustManager(keyStore);
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return trustManager;
-    }
 
     @NonNull
     public static ITokenService getTokenService() {

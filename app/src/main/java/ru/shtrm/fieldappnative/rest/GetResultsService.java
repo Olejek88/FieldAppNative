@@ -23,7 +23,6 @@ import ru.shtrm.fieldappnative.db.realm.ReferenceUpdate;
 
 public class GetResultsService extends Service {
     public static final String ACTION = "ru.shtrm.fieldappnative.rest.GET_ORDERS";
-    public static final String ORDER_STATUS_UUIDS = "orderStatusUuids";
     private static final String TAG = GetResultsService.class.getSimpleName();
     private boolean isRuning;
     private Context context;

@@ -13,12 +13,11 @@ import ru.shtrm.fieldappnative.db.ToirRealm;
 
 /**
  * @author Oleg Ivanov
- *
  */
 @SuppressWarnings("unused")
 public class FieldApplication extends Application {
 
-	public static String serverUrl = "";
+    public static String serverUrl = "";
     public static InputStream digicertsha2CA;
 
     public static boolean isInternetOn(Context context) {
@@ -42,18 +41,16 @@ public class FieldApplication extends Application {
         return false;
     }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
         //digicertsha2CA = getResources().openRawResource(R.raw.digicertsha2secureserverca);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         serverUrl = preferences.getString(getString(R.string.serverUrl), null);
-        if (serverUrl == null) {
-            String defaultUrl = "https://api.fieldapp.ru";
-            serverUrl = defaultUrl;
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            sp.edit().putString(getString(R.string.serverUrl), defaultUrl).apply();
-        }
+        String defaultUrl = "http://api.field.net";
+        serverUrl = defaultUrl;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sp.edit().putString(getString(R.string.serverUrl), defaultUrl).apply();
 
         // инициализируем синглтон с данными о активном пользователе на уровне приложения
         AuthorizedUser authorizedUser = AuthorizedUser.getInstance();

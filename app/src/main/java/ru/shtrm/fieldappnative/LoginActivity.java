@@ -1,7 +1,6 @@
 package ru.shtrm.fieldappnative;
 
 import android.app.ProgressDialog;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -19,12 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,12 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         initViews();
-
-        Button loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            }
-        });
     }
 
     public void initViews() {
@@ -108,6 +99,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         pinCode.requestFocus();
+
+        Button loginButton = findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onClickLogin(v);
+            }
+        });
     }
 
     @Override
@@ -289,7 +287,6 @@ public class LoginActivity extends AppCompatActivity {
             });
             // завершаем окно входа
             setResult(RESULT_OK);
-            finish();
         } else {
             loginError.setVisibility(View.VISIBLE);
         }
