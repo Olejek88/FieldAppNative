@@ -2,6 +2,7 @@ package ru.shtrm.fieldappnative.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,13 +11,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.Date;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -43,53 +51,73 @@ public class ChannelsFragment extends Fragment {
         return new ChannelsFragment();
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public static void showDialogChannel(ViewGroup parent, LayoutInflater inflater, Context context) {
+        final View addChannelLayout;
+        final Spinner measureTypeSpinner;
+        final MeasureTypeAdapter measureTypeAdapter;
+        addChannelLayout = inflater.inflate(R.layout.add_channel, parent, false);
+        measureTypeSpinner = addChannelLayout.findViewById(R.id.spinner_measure_type);
 
-        View rootView = inflater.inflate(R.layout.channels_layout, container, false);
-        Activity activity = getActivity();
-        if (activity == null) {
-            return null;
-        }
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<MeasureType> measureType = realm.where(MeasureType.class).findAll();
+        measureTypeAdapter = new MeasureTypeAdapter(measureType);
+        measureTypeSpinner.setAdapter(measureTypeAdapter);
+        realm.close();
 
-        Toolbar toolbar = activity.findViewById(R.id.toolbar);
-        toolbar.setSubtitle(getString(R.string.menu_equipment));
-        realmDB = Realm.getDefaultInstance();
-
-        // обработчик для выпадающих списков у нас один
-        SpinnerListener spinnerListener = new SpinnerListener();
-        channelListView = rootView.findViewById(R.id.channel_listView);
-
-        RealmResults<Channel> channels = realmDB.where(Channel.class).findAll();
-        RealmResults<MeasureType> measureTypes = realmDB.where(MeasureType.class).findAll();
-        typeSpinner = rootView.findViewById(R.id.simple_spinner);
-        MeasureTypeAdapter typeSpinnerAdapter = new MeasureTypeAdapter(measureTypes);
-        typeSpinnerAdapter.notifyDataSetChanged();
-        typeSpinner.setAdapter(typeSpinnerAdapter);
-        typeSpinner.setOnItemSelectedListener(spinnerListener);
-
-        channelListView.setOnItemClickListener(new ListviewClickListener());
-
-        FloatingActionButton addButton = rootView.findViewById(R.id.fab_add_channel);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.menu_add_channel));
+        builder.setView(addChannelLayout);
+        builder.setIcon(R.drawable.ic_icon_tasks2);
+        builder.setCancelable(false);
+        builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Handler handler = new Handler(new Handler.Callback() {
-                    @Override
-                    public boolean handleMessage(Message msg) {
-                        return true;
-                    }
-                });
+            public void onClick(DialogInterface dialog, int which) {
             }
         });
-        initView();
-        rootView.setFocusableInTouchMode(true);
-        rootView.requestFocus();
 
-        isInit = true;
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
 
-        return rootView;
+        final AlertDialog dialog = builder.create();
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText titleEdit = addChannelLayout.findViewById(R.id.add_title);
+                String title = titleEdit.getText().toString();
+                MeasureType currentMeasureType = null;
+
+                int position = measureTypeSpinner.getSelectedItemPosition();
+                if (position != AdapterView.INVALID_POSITION) {
+                    currentMeasureType = measureTypeAdapter.getItem(position);
+                }
+                if (currentMeasureType != null) {
+                    Realm realm = Realm.getDefaultInstance();
+                    UUID uuid = UUID.randomUUID();
+                    Date date = new Date();
+                    realm.beginTransaction();
+                    long nextId = Channel.getLastId() + 1;
+                    Channel channel = new Channel();
+                    channel.set_id(nextId);
+                    channel.setUuid(uuid.toString().toUpperCase());
+                    channel.setMeasureType(currentMeasureType);
+                    channel.setTitle(title);
+                    channel.setCreatedAt(date);
+                    channel.setChangedAt(date);
+                    channel.setSent(false);
+                    realm.copyToRealmOrUpdate(channel);
+
+                    realm.commitTransaction();
+                    realm.close();
+                    dialog.dismiss();
+                }
+            }
+        };
+        dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(listener);
     }
 
     private void initView() {
@@ -165,5 +193,55 @@ public class ChannelsFragment extends Fragment {
             }
             FillListViewChannels(type);
         }
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.channels_layout, container, false);
+        Activity activity = getActivity();
+        if (activity == null) {
+            return null;
+        }
+
+        Toolbar toolbar = activity.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setSubtitle(getString(R.string.menu_channels));
+        }
+        realmDB = Realm.getDefaultInstance();
+
+        // обработчик для выпадающих списков у нас один
+        SpinnerListener spinnerListener = new SpinnerListener();
+        channelListView = rootView.findViewById(R.id.channels_listView);
+
+        RealmResults<MeasureType> measureTypes = realmDB.where(MeasureType.class).findAll();
+        typeSpinner = rootView.findViewById(R.id.simple_spinner);
+        MeasureTypeAdapter typeSpinnerAdapter = new MeasureTypeAdapter(measureTypes);
+        typeSpinnerAdapter.notifyDataSetChanged();
+        typeSpinner.setAdapter(typeSpinnerAdapter);
+        typeSpinner.setOnItemSelectedListener(spinnerListener);
+
+        channelListView.setOnItemClickListener(new ListviewClickListener());
+
+        FloatingActionButton addButton = rootView.findViewById(R.id.fab_add_channel);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Handler handler = new Handler(new Handler.Callback() {
+                    @Override
+                    public boolean handleMessage(Message msg) {
+                        return true;
+                    }
+                });
+            }
+        });
+        initView();
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
+
+        isInit = true;
+
+        return rootView;
     }
 }

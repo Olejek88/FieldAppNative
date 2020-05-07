@@ -209,6 +209,20 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.frame_container, ChannelsFragment.newInstance()).commit();
     }
 
+    /**
+     * Обработчик клика меню обновления приложения
+     *
+     * @param menuItem Элемент меню
+     */
+    public void onActionUpdate(MenuItem menuItem) {
+        if (!FieldApplication.isInternetOn(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "Нет соединения с сетью", Toast.LENGTH_LONG).show();
+            return;
+        }
+        updateApk(MainActivity.this);
+    }
+
+
     public void onActionSettings(MenuItem menuItem) {
         Log.d(TAG, "onActionSettings");
         FragmentTransaction tr = getSupportFragmentManager().beginTransaction();

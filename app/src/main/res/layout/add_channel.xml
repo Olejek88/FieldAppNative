@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/measure_type_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/choose_measure_type"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/larisaTextColorABlack" />
+
+    <Spinner
+        android:id="@+id/spinner_measure_type"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/measure_type_label"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/add_title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/spinner_measure_type"
+        android:text="@string/defect_description"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/larisaTextColorABlack" />
+
+    <EditText
+        android:id="@+id/add_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_title_label"
+        android:gravity="top|start"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="2"
+        android:paddingTop="20dp"
+        android:scrollbars="vertical" />
+
+</RelativeLayout>

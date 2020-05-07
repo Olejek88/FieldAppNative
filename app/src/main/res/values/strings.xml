@@ -44,6 +44,7 @@
     <string name="menu_channels">Каналы измерения</string>
     <string name="menu_values">Измерения</string>
     <string name="menu_enter">Добавить измерение</string>
+    <string name="menu_add_channel">Добавить канал</string>
     <string name="menu_about_app">О программе</string>
     <string name="menu_information">Информация о версии</string>
     <string name="menu_exit">Выход</string>
@@ -99,4 +100,6 @@
     <string name="user_pin_default">****</string>
     <string name="user_pin">Пин-код</string>
     <string name="login_error">! Ошибка ввода пин-кода для данного пользователя</string>
+
+    <string name="choose_measure_type">Выберите тип измерения</string>
 </resources>
