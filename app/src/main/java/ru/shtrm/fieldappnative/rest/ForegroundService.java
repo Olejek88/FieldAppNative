@@ -105,7 +105,6 @@ public class ForegroundService extends Service {
                 AuthorizedUser user = AuthorizedUser.getInstance();
                 Realm realm = Realm.getDefaultInstance();
                 RealmResults<MeasuredValue> values = realm.where(MeasuredValue.class)
-                        .equalTo("user.uuid", user.getUuid())
                         .equalTo("sent", false)
                         .findAll();
                 if (values.size() == 0) {

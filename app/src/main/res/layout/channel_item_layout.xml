@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/channel_title"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="7dp"
         android:textColor="@color/larisaTextColorABlack"
         android:textSize="14sp" />
 

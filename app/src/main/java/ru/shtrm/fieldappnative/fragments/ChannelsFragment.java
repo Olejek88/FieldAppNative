@@ -1,6 +1,7 @@
 package ru.shtrm.fieldappnative.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,19 +22,23 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import retrofit2.Response;
 import ru.shtrm.fieldappnative.ChannelInfoActivity;
 import ru.shtrm.fieldappnative.R;
 import ru.shtrm.fieldappnative.db.adapters.ChannelAdapter;
 import ru.shtrm.fieldappnative.db.adapters.MeasureTypeAdapter;
 import ru.shtrm.fieldappnative.db.realm.Channel;
 import ru.shtrm.fieldappnative.db.realm.MeasureType;
+import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
+import ru.shtrm.fieldappnative.db.realm.ReferenceUpdate;
+import ru.shtrm.fieldappnative.rest.AppAPIFactory;
 
 public class ChannelsFragment extends Fragment {
     private static final String TAG;
@@ -124,23 +129,82 @@ public class ChannelsFragment extends Fragment {
         FillListViewChannels(null);
     }
 
-    private void FillListViewChannels(String channelTypeUuid) {
-        RealmResults<Channel> channels;
-        if (channelTypeUuid != null) {
-            channels = realmDB.where(Channel.class)
-                    .equalTo("MeasureType.uuid", channelTypeUuid)
-                    .findAll();
-        } else {
-            channels = realmDB.where(Channel.class).findAll();
-        }
+    public static void updateReferences(final Context context) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final Date currentDate = new Date();
+                String changedDate;
+                String referenceName;
+                Realm realm = Realm.getDefaultInstance();
 
-        ChannelAdapter channelAdapter = new ChannelAdapter(channels);
-        channelListView.setAdapter(channelAdapter);
+                // MeasuredValue
+                referenceName = MeasuredValue.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<MeasuredValue>> response = AppAPIFactory.getMeasuredValueService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<MeasuredValue> list = response.body();
+                        // устанавливаем флаг того данные были уже отправлены на сервер
+                        for (MeasuredValue value : list) {
+                            value.setSent(true);
+                        }
+
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // MeasureType
+                referenceName = MeasureType.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<MeasureType>> response = AppAPIFactory.getMeasureTypeService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<MeasureType> list = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                referenceName = Channel.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<Channel>> response = AppAPIFactory.getChannelService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<Channel> list = response.body();
+                        for (Channel value : list) {
+                            value.setSent(true);
+                        }
+
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                realm.close();
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && isInit) {
             initView();
@@ -195,6 +259,104 @@ public class ChannelsFragment extends Fragment {
         }
     }
 
+    /**
+     * Обновляет тупо все справочники
+     *
+     * @param dialog Диалог показывающий процесс обновления справочников
+     */
+    public static void updateReferences(final ProgressDialog dialog) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // получаем справочники, обновляем всё несмотря на то что часть данных будет дублироваться
+                final Date currentDate = new Date();
+                String changedDate;
+                String referenceName;
+                Realm realm = Realm.getDefaultInstance();
+
+                // MeasuredValue
+                referenceName = MeasuredValue.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<MeasuredValue>> response = AppAPIFactory.getMeasuredValueService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<MeasuredValue> list = response.body();
+                        // устанавливаем флаг того данные были уже отправлены на сервер
+                        for (MeasuredValue value : list) {
+                            value.setSent(true);
+                        }
+
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // MeasureType
+                referenceName = MeasureType.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<MeasureType>> response = AppAPIFactory.getMeasureTypeService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<MeasureType> list = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                referenceName = Channel.class.getSimpleName();
+                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
+                try {
+                    Response<List<Channel>> response = AppAPIFactory.getChannelService()
+                            .get(changedDate).execute();
+                    if (response.isSuccessful()) {
+                        List<Channel> list = response.body();
+                        for (Channel value : list) {
+                            value.setSent(true);
+                        }
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // гасим диалог обновления справочников
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+
+                realm.close();
+            }
+        });
+        thread.start();
+    }
+
+    private void FillListViewChannels(String channelTypeUuid) {
+        RealmResults<Channel> channels;
+        if (channelTypeUuid != null) {
+            channels = realmDB.where(Channel.class)
+                    .equalTo("measureType.uuid", channelTypeUuid)
+                    .findAll();
+        } else {
+            channels = realmDB.where(Channel.class).findAll();
+        }
+
+        ChannelAdapter channelAdapter = new ChannelAdapter(channels);
+        channelListView.setAdapter(channelAdapter);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -228,6 +390,7 @@ public class ChannelsFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showDialogChannel((ViewGroup) v.getParent(), getLayoutInflater(), v.getContext());
                 Handler handler = new Handler(new Handler.Callback() {
                     @Override
                     public boolean handleMessage(Message msg) {

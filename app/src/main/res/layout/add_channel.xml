@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/spinner_measure_type"
-        android:text="@string/defect_description"
+        android:text="@string/channel_title"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/larisaTextColorABlack" />
 

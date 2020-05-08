@@ -102,4 +102,5 @@
     <string name="login_error">! Ошибка ввода пин-кода для данного пользователя</string>
 
     <string name="choose_measure_type">Выберите тип измерения</string>
+    <string name="channel_title">Название канала</string>
 </resources>

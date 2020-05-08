@@ -95,16 +95,13 @@ public class MainActivity extends AppCompatActivity {
      * Инициализация приложения при запуске
      */
     public void init() {
-        // значение по умолчанию для драйвера rfid
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         // обнуляем текущего активного пользователя
         AuthorizedUser.getInstance().reset();
-
         if (!initDB()) {
             // принудительное обновление приложения
             finish();
         }
-
         // запускаем сервис который будет в фоне заниматься получением/отправкой данных
         Intent intent = new Intent(this, ForegroundService.class);
         startService(intent);

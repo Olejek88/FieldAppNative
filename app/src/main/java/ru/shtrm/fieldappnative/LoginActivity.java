@@ -30,8 +30,6 @@ import ru.shtrm.fieldappnative.rest.AppAPIFactory;
 import ru.shtrm.fieldappnative.serverapi.TokenSrv;
 import ru.shtrm.fieldappnative.utils.MainUtil;
 
-import static ru.shtrm.fieldappnative.utils.RoundedImageView.getResizedBitmap;
-
 public class LoginActivity extends AppCompatActivity {
 
     private EditText userSelect;

@@ -20,6 +20,7 @@ import ru.shtrm.fieldappnative.AuthorizedUser;
 import ru.shtrm.fieldappnative.R;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 import ru.shtrm.fieldappnative.db.realm.ReferenceUpdate;
+import ru.shtrm.fieldappnative.fragments.ChannelsFragment;
 
 public class GetResultsService extends Service {
     public static final String ACTION = "ru.shtrm.fieldappnative.rest.GET_ORDERS";
@@ -41,6 +42,7 @@ public class GetResultsService extends Service {
                 finishService();
                 return;
             }
+            ChannelsFragment.updateReferences(context);
 
             // получаем список последних измерений
             String changedDate = ReferenceUpdate.lastChangedAsStr(MeasuredValue.class.getSimpleName());
@@ -72,7 +74,7 @@ public class GetResultsService extends Service {
             if (notificationManager != null) {
                 PackageManager pm = getPackageManager();
                 Intent intent = pm.getLaunchIntentForPackage("ru.shtrm.fieldappnative");
-                if (intent != null) {
+                if (intent != null && count > 0) {
                     intent.putExtra("action", "MeasureFragment");
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("count", count);

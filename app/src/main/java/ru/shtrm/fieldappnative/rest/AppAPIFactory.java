@@ -110,7 +110,7 @@ AppAPIFactory {
     }
 
     @NonNull
-    public static IChannel getEquipmentService() {
+    public static IChannel getChannelService() {
         return getRetrofit().create(IChannel.class);
     }
 
