@@ -1,6 +1,8 @@
 package ru.shtrm.fieldappnative.db.realm;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -39,7 +41,9 @@ public class Channel extends RealmObject implements ISend {
                 equalTo("channel.uuid", this.getUuid()).
                 sort("createdAt",Sort.DESCENDING).findFirst();
         if (measuredValue != null) {
-            return measuredValue.getValue().concat(" ").concat(measuredValue.getDate().toString());
+            String sDate = new SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.US)
+                    .format(measuredValue.getDate());
+            return measuredValue.getValue().concat(" [").concat(sDate).concat("]");
         }
         realm.close();
         return "нет измерений";

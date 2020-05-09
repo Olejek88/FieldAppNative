@@ -7,36 +7,40 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import ru.shtrm.fieldappnative.R;
-import ru.shtrm.fieldappnative.db.realm.MeasureType;
+import ru.shtrm.fieldappnative.db.realm.Channel;
+import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
-public class MeasuredValueAdapter extends RealmBaseAdapter<MeasureType> implements ListAdapter {
-    public static final String TABLE_NAME = "MeasureType";
+public class MeasuredValueAdapter extends RealmBaseAdapter<MeasuredValue> implements ListAdapter {
+    public static final String TABLE_NAME = "MeasuredValue";
 
-    public MeasuredValueAdapter(RealmResults<MeasureType> data) {
+    public MeasuredValueAdapter(RealmResults<MeasuredValue> data) {
         super(data);
     }
 
     @Override
-    public MeasureType getItem(int position) {
-        MeasureType measureType = null;
+    public MeasuredValue getItem(int position) {
+        MeasuredValue measuredValue = null;
         if (adapterData != null) {
-            measureType = adapterData.get(position);
+            measuredValue = adapterData.get(position);
         }
 
-        return measureType;
+        return measuredValue;
     }
 
     @Override
     public long getItemId(int position) {
-        MeasureType measureType;
+        MeasuredValue measuredValue;
         if (adapterData != null) {
-            measureType = adapterData.get(position);
-            return measureType.get_id();
+            measuredValue = adapterData.get(position);
+            return measuredValue.get_id();
         }
-
         return 0;
     }
 
@@ -47,38 +51,22 @@ public class MeasuredValueAdapter extends RealmBaseAdapter<MeasureType> implemen
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            if (parent.getId() == R.id.simple_spinner) {
-                convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-                viewHolder.title = convertView.findViewById(android.R.id.text1);
-                convertView.setTag(viewHolder);
-            }
+            convertView = inflater.inflate(R.layout.measure_item_layout, parent, false);
+            viewHolder.measure = convertView.findViewById(R.id.measure);
+            convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        MeasureType measureType;
-        if (adapterData != null && viewHolder.title != null) {
-            measureType = adapterData.get(position);
-            if (measureType != null) {
-                viewHolder.title.setText(measureType.getTitle());
+        MeasuredValue measuredValue;
+        if (adapterData != null && viewHolder.measure != null) {
+            measuredValue = adapterData.get(position);
+            if (measuredValue != null) {
+                String sDate = new SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.US)
+                        .format(measuredValue.getDate());
+                viewHolder.measure.setText(measuredValue.getValue().concat(" [").concat(sDate).concat("]"));
             }
         }
-
-        if (convertView == null) {
-            TextView textView = new TextView(context);
-            if (adapterData != null) {
-                measureType = adapterData.get(position);
-                if (measureType != null) {
-                    textView.setText(measureType.getTitle());
-                }
-
-                textView.setTextSize(16);
-                textView.setPadding(5, 5, 5, 5);
-            }
-
-            return textView;
-        }
-
         return convertView;
     }
 
@@ -88,7 +76,6 @@ public class MeasuredValueAdapter extends RealmBaseAdapter<MeasureType> implemen
     }
 
     private static class ViewHolder {
-        TextView uuid;
-        TextView title;
+        TextView measure;
     }
 }

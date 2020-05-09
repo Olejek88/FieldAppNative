@@ -49,7 +49,6 @@ public class ChannelAdapter extends RealmBaseAdapter<Channel> implements ListAda
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewHolder viewHolder;
-        viewHolder = new ChannelAdapter.ViewHolder();
         if (convertView == null) {
                 convertView = inflater.inflate(R.layout.channel_item_layout, parent, false);
                 viewHolder = new ChannelAdapter.ViewHolder();

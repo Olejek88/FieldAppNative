@@ -31,9 +31,14 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
+import ru.shtrm.fieldappnative.db.realm.Channel;
+import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 import ru.shtrm.fieldappnative.fragments.ChannelsFragment;
 import ru.shtrm.fieldappnative.fragments.SettingsFragment;
 import ru.shtrm.fieldappnative.rest.ForegroundService;
@@ -152,6 +157,16 @@ public class MainActivity extends AppCompatActivity {
                 toast.setGravity(Gravity.BOTTOM, 0, 0);
                 toast.show();
                 success = true;
+            }
+            RealmResults<MeasuredValue> measuredValues = realmDB.where(MeasuredValue.class).
+                    sort("createdAt", Sort.DESCENDING).
+                    findAll();
+            for (MeasuredValue measuredValue : measuredValues) {
+                if (measuredValue.getDate() == null) {
+                    realmDB.beginTransaction();
+                    measuredValue.deleteFromRealm();
+                    realmDB.commitTransaction();
+                }
             }
         } catch (Exception e) {
             Toast toast = Toast.makeText(this, getString(R.string.toast_db_error),

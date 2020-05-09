@@ -87,4 +87,12 @@ public class MeasuredValue extends RealmObject implements ISend {
     public void setSent(boolean sent) {
         this.sent = sent;
     }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
 }

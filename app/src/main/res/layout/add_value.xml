@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/measure_type_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/menu_enter"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/larisaTextColorABlack" />
+
+    <EditText
+        android:id="@+id/add_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/measure_type_label"
+        android:gravity="top|start"
+        android:inputType="numberDecimal"
+        android:lines="1"
+        android:paddingTop="20dp"
+        android:scrollbars="vertical" />
+
+</RelativeLayout>

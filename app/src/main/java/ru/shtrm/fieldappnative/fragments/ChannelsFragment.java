@@ -391,12 +391,6 @@ public class ChannelsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showDialogChannel((ViewGroup) v.getParent(), getLayoutInflater(), v.getContext());
-                Handler handler = new Handler(new Handler.Callback() {
-                    @Override
-                    public boolean handleMessage(Message msg) {
-                        return true;
-                    }
-                });
             }
         });
         initView();
