@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             aUser.setToken(savedInstanceState.getString("token"));
             aUser.setUuid(savedInstanceState.getString("userUuid"));
             aUser.setLogin(savedInstanceState.getString("userLogin"));
+            Log.d(TAG, "onCreate finished");
         }
 
         Log.d(TAG, "onCreate");
@@ -280,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("token", authorizedUser.getToken());
         outState.putString("userUuid", authorizedUser.getUuid());
         outState.putString("userLogin", authorizedUser.getLogin());
+        Log.d(TAG, "onSaveInstanceState finished");
     }
 
     /*

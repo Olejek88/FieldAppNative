@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -18,13 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.SimpleDateFormat;
@@ -42,11 +39,8 @@ import ru.shtrm.fieldappnative.db.realm.Channel;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class ChannelInfoActivity extends AppCompatActivity {
-    protected BarChart mChart;
+    protected static BarChart mChart;
 
-    private final static String TAG = "ChannelInfoActivity";
-
-    private Realm realmDB;
     private static String channel_uuid;
     private TextView tv_channel_name;
 
@@ -98,6 +92,7 @@ public class ChannelInfoActivity extends AppCompatActivity {
                     realm.commitTransaction();
                     realm.close();
                     dialog.dismiss();
+                    setData();
                 }
             }
         };
@@ -121,9 +116,6 @@ public class ChannelInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Context context = this;
-
-        realmDB = Realm.getDefaultInstance();
         Bundle b = getIntent().getExtras();
         if (b != null && b.getString("channel_uuid") != null) {
             channel_uuid = b.getString("channel_uuid");
@@ -143,7 +135,6 @@ public class ChannelInfoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realmDB.close();
     }
 
     void initChart() {
@@ -169,7 +160,56 @@ public class ChannelInfoActivity extends AppCompatActivity {
         setData();
     }
 
+    private static void setData() {
+        int count;
+        final ArrayList<String> xVals = new ArrayList<>();
+        XAxis xAxis = mChart.getXAxis();
+        Realm realmDB = Realm.getDefaultInstance();
+
+        List<MeasuredValue> measures = realmDB
+                .where(MeasuredValue.class)
+                .equalTo("channel.uuid", channel_uuid)
+                .sort("date", Sort.DESCENDING)
+                .limit(10)
+                .findAll();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM", Locale.US);
+        count = measures.size();
+        for (int i = 0; i < count; i++) {
+            MeasuredValue val = measures.get(count - i - 1);
+            if (val != null) {
+                Date dateVal = val.getDate();
+                if (dateVal != null) {
+                    String xVal = simpleDateFormat.format(dateVal);
+                    xVals.add(xVal);
+                } else {
+                    xVals.add("00.00");
+                }
+            }
+        }
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return xVals.get((int) value);
+            }
+        });
+
+        List<BarEntry> yVals = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            if (measures.get(count - i - 1) != null) {
+                yVals.add(new BarEntry(i, Float.parseFloat(measures.get(count - i - 1).getValue())));
+            }
+        }
+
+        BarDataSet set1 = new BarDataSet(yVals, "DataSet");
+        //set1.setBarSpacePercent(35f);
+        BarData data = new BarData(set1);
+        data.setValueTextSize(10f);
+        mChart.setData(data);
+        realmDB.close();
+    }
+
     private void initView() {
+        Realm realmDB = Realm.getDefaultInstance();
         final Channel channel = realmDB.where(Channel.class).equalTo("uuid", channel_uuid).findFirst();
         if (channel == null) {
             Toast.makeText(getApplicationContext(), "Неизвестный канал!!", Toast.LENGTH_LONG).show();
@@ -192,58 +232,7 @@ public class ChannelInfoActivity extends AppCompatActivity {
                 showDialogValue((ViewGroup) v.getParent(), getLayoutInflater(), v.getContext(), channel);
             }
         });
+        realmDB.close();
         initChart();
-    }
-
-    public class MyXAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
-        private ArrayList<String> mValues;
-
-        MyXAxisValueFormatter(ArrayList<String> values) {
-            this.mValues = values;
-        }
-
-        @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            return mValues.get((int) value);
-        }
-    }
-
-    private void setData() {
-        int count;
-        ArrayList<String> xVals = new ArrayList<>();
-        XAxis xAxis = mChart.getXAxis();
-
-        List<MeasuredValue> measures = realmDB
-                .where(MeasuredValue.class)
-                .equalTo("channel.uuid", channel_uuid)
-                .sort("date", Sort.DESCENDING)
-                .findAll();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM", Locale.US);
-        count = measures.size();
-        for (int i = 0; i < count; i++) {
-            MeasuredValue val = measures.get(i);
-            if (val != null) {
-                Date dateVal = val.getDate();
-                if (dateVal != null) {
-                    xVals.add(simpleDateFormat.format(dateVal));
-                } else {
-                    xVals.add("00.00");
-                }
-            }
-        }
-        xAxis.setValueFormatter(new MyXAxisValueFormatter(xVals));
-
-        List<BarEntry> yVals = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            if (measures.get(i) != null) {
-                yVals.add(new BarEntry(i, Float.parseFloat(measures.get(i).getValue())));
-            }
-        }
-
-        BarDataSet set1 = new BarDataSet(yVals, "DataSet");
-        //set1.setBarSpacePercent(35f);
-        BarData data = new BarData(set1);
-        data.setValueTextSize(10f);
-        mChart.setData(data);
     }
 }

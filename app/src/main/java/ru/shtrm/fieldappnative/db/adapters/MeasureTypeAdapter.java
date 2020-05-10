@@ -88,7 +88,6 @@ public class MeasureTypeAdapter extends RealmBaseAdapter<MeasureType> implements
     }
 
     private static class ViewHolder {
-        TextView uuid;
         TextView title;
     }
 

@@ -167,8 +167,7 @@ public class ForegroundService extends Service {
 
     private boolean isValidUser() {
         AuthorizedUser user = AuthorizedUser.getInstance();
-        boolean isValidUser = user.getLogin() != null && user.getToken() != null;
-        return isValidUser;
+        return user.getLogin() != null && user.getToken() != null;
     }
 
 

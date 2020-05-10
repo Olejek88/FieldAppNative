@@ -1,19 +1,17 @@
 package ru.shtrm.fieldappnative.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +47,7 @@ public class ChannelsFragment extends Fragment {
 
     private Realm realmDB;
     private boolean isInit;
+    private int first = 0;
     private Spinner typeSpinner;
     private ListView channelListView;
 
@@ -259,98 +258,15 @@ public class ChannelsFragment extends Fragment {
         }
     }
 
-    /**
-     * Обновляет тупо все справочники
-     *
-     * @param dialog Диалог показывающий процесс обновления справочников
-     */
-    public static void updateReferences(final ProgressDialog dialog) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // получаем справочники, обновляем всё несмотря на то что часть данных будет дублироваться
-                final Date currentDate = new Date();
-                String changedDate;
-                String referenceName;
-                Realm realm = Realm.getDefaultInstance();
-
-                // MeasuredValue
-                referenceName = MeasuredValue.class.getSimpleName();
-                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
-                try {
-                    Response<List<MeasuredValue>> response = AppAPIFactory.getMeasuredValueService()
-                            .get(changedDate).execute();
-                    if (response.isSuccessful()) {
-                        List<MeasuredValue> list = response.body();
-                        // устанавливаем флаг того данные были уже отправлены на сервер
-                        for (MeasuredValue value : list) {
-                            value.setSent(true);
-                        }
-
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(list);
-                        realm.commitTransaction();
-                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // MeasureType
-                referenceName = MeasureType.class.getSimpleName();
-                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
-                try {
-                    Response<List<MeasureType>> response = AppAPIFactory.getMeasureTypeService()
-                            .get(changedDate).execute();
-                    if (response.isSuccessful()) {
-                        List<MeasureType> list = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(list);
-                        realm.commitTransaction();
-                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                referenceName = Channel.class.getSimpleName();
-                changedDate = ReferenceUpdate.lastChangedAsStr(referenceName);
-                try {
-                    Response<List<Channel>> response = AppAPIFactory.getChannelService()
-                            .get(changedDate).execute();
-                    if (response.isSuccessful()) {
-                        List<Channel> list = response.body();
-                        for (Channel value : list) {
-                            value.setSent(true);
-                        }
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(list);
-                        realm.commitTransaction();
-                        ReferenceUpdate.saveReferenceData(referenceName, currentDate);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // гасим диалог обновления справочников
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-
-                realm.close();
-            }
-        });
-        thread.start();
-    }
-
     private void FillListViewChannels(String channelTypeUuid) {
         RealmResults<Channel> channels;
-        if (channelTypeUuid != null) {
+        if (channelTypeUuid != null && first > 1) {
             channels = realmDB.where(Channel.class)
                     .equalTo("measureType.uuid", channelTypeUuid)
                     .findAll();
         } else {
             channels = realmDB.where(Channel.class).findAll();
+            first++;
         }
 
         ChannelAdapter channelAdapter = new ChannelAdapter(channels);
@@ -380,9 +296,6 @@ public class ChannelsFragment extends Fragment {
         RealmResults<MeasureType> measureTypes = realmDB.where(MeasureType.class).findAll();
         typeSpinner = rootView.findViewById(R.id.simple_spinner);
         MeasureTypeAdapter typeSpinnerAdapter = new MeasureTypeAdapter(measureTypes);
-        typeSpinnerAdapter.notifyDataSetChanged();
-        typeSpinner.setAdapter(typeSpinnerAdapter);
-        typeSpinner.setOnItemSelectedListener(spinnerListener);
 
         channelListView.setOnItemClickListener(new ListviewClickListener());
 
@@ -394,11 +307,22 @@ public class ChannelsFragment extends Fragment {
             }
         });
         initView();
+        typeSpinnerAdapter.notifyDataSetChanged();
+        typeSpinner.setAdapter(typeSpinnerAdapter);
+        typeSpinner.setOnItemSelectedListener(spinnerListener);
+
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
         isInit = true;
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume()");
+        FillListViewChannels(null);
+        super.onResume();
     }
 }

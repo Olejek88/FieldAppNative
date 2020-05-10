@@ -153,6 +153,7 @@ AppAPIFactory {
         builder.registerTypeAdapter(Date.class, new DateTypeDeserializer());
         builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         builder.serializeNulls();
+        builder.setLenient();
         Gson gson = builder.create();
         return new Retrofit.Builder()
                 .baseUrl(FieldApplication.serverUrl)

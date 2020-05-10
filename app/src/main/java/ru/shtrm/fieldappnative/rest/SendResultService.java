@@ -19,6 +19,7 @@ import io.realm.RealmResults;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import ru.shtrm.fieldappnative.AuthorizedUser;
+import ru.shtrm.fieldappnative.db.realm.Channel;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class SendResultService extends Service {
@@ -26,8 +27,6 @@ public class SendResultService extends Service {
     public static final String ACTION = "ru.shtrm.fieldappnative.rest.SEND_VALUES";
     private static final String TAG = SendResultService.class.getSimpleName();
     private boolean isRuning;
-    private long[] ids;
-    private Context context;
 
     /**
      * Метод для выполнения отправки данных на сервер.
@@ -47,6 +46,13 @@ public class SendResultService extends Service {
 
             // выбираем все для отправки
             Realm realm = Realm.getDefaultInstance();
+            RealmResults<Channel> channels = realm.where(Channel.class)
+                    .equalTo("sent", false)
+                    .findAll();
+            // отправляем
+            idUuid = sendChannels(realm.copyFromRealm(channels));
+            // отмечаем успешно отправленные
+            setSendChannels(idUuid, realm);
 
             // выбираем все неотправленные по каким-то причинам ранее измерения
             List<MeasuredValue> sendOldMeasuredValues = new ArrayList<>();
@@ -71,7 +77,7 @@ public class SendResultService extends Service {
     @Override
     public void onCreate() {
         isRuning = false;
-        context = getApplicationContext();
+        Context context = getApplicationContext();
     }
 
     @Override
@@ -83,7 +89,7 @@ public class SendResultService extends Service {
         if (!isRuning) {
             Log.d(TAG, "Запускаем поток отправки на сервер...");
             isRuning = true;
-            ids = intent.getLongArrayExtra(VALUE_IDS);
+            long[] ids = intent.getLongArrayExtra(VALUE_IDS);
             new Thread(task).start();
         }
 
@@ -135,6 +141,38 @@ public class SendResultService extends Service {
     }
 
     /**
+     * Отправляем новые каналы
+     *
+     * @param list List<{@link Channel}>
+     * @return LongSparseArray<String>
+     */
+    private LongSparseArray<String> sendChannels(List<Channel> list) {
+        LongSparseArray<String> idUuid = new LongSparseArray<>();
+        Call<ResponseBody> call = AppAPIFactory.getChannelService().send(list);
+        try {
+            retrofit2.Response response = call.execute();
+            ResponseBody result = (ResponseBody) response.body();
+            if (response.isSuccessful()) {
+                JSONObject jObj = new JSONObject(result.string());
+                // при сохранении данных на сервере произошли ошибки
+                // данный флаг пока не используем
+//                boolean success = (boolean) jObj.get("success");
+                JSONArray data = (JSONArray) jObj.get("data");
+                for (int idx = 0; idx < data.length(); idx++) {
+                    JSONObject item = (JSONObject) data.get(idx);
+                    Long _id = Long.parseLong(item.get("_id").toString());
+                    String uuid = item.get("uuid").toString();
+                    idUuid.put(_id, uuid);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return idUuid;
+    }
+
+    /**
      * Отмечаем успешно отправленные измерения
      *
      * @param idUuid LongSparseArray<String>
@@ -152,6 +190,23 @@ public class SendResultService extends Service {
             }
         }
 
+        realm.commitTransaction();
+    }
+
+    /**
+     * Отмечаем успешно отправленные каналы
+     *
+     * @param idUuid LongSparseArray<String>
+     */
+    private void setSendChannels(LongSparseArray<String> idUuid, Realm realm) {
+        realm.beginTransaction();
+        for (int idx = 0; idx < idUuid.size(); idx++) {
+            String uuid = idUuid.valueAt(idx);
+            Channel value = realm.where(Channel.class).equalTo("uuid", uuid).findFirst();
+            if (value != null) {
+                value.setSent(true);
+            }
+        }
         realm.commitTransaction();
     }
 }
