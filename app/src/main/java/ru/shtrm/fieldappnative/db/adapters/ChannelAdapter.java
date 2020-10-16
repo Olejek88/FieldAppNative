@@ -4,18 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import ru.shtrm.fieldappnative.R;
 import ru.shtrm.fieldappnative.db.realm.Channel;
-import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class ChannelAdapter extends RealmBaseAdapter<Channel> implements ListAdapter {
 

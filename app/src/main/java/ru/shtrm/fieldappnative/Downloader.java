@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import ru.shtrm.fieldappnative.rest.AppAPIFactory;
-
 public class Downloader extends AsyncTask<String, Integer, String> {
 
     private ProgressDialog dialog;

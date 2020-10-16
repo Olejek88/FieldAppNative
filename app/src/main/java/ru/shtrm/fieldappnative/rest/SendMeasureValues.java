@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.realm.Realm;
 import okhttp3.ResponseBody;
-import retrofit2.*;
+import retrofit2.Call;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class SendMeasureValues extends AsyncTask<MeasuredValue[], Void, LongSparseArray<String>> {

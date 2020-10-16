@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
 import ru.shtrm.fieldappnative.fragments.SettingsFragment;
 
 public class PrefsActivity extends AppCompatActivity {

@@ -8,13 +8,11 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 import ru.shtrm.fieldappnative.R;
-import ru.shtrm.fieldappnative.db.realm.Channel;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 
 public class MeasuredValueAdapter extends RealmBaseAdapter<MeasuredValue> implements ListAdapter {

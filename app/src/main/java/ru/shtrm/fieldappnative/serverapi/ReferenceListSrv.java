@@ -1,7 +1,8 @@
 package ru.shtrm.fieldappnative.serverapi;
 
-import java.util.ArrayList;
 import com.google.gson.annotations.Expose;
+
+import java.util.ArrayList;
 
 public class ReferenceListSrv {
 	@Expose

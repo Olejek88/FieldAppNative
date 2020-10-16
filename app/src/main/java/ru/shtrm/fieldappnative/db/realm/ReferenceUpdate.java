@@ -2,8 +2,8 @@ package ru.shtrm.fieldappnative.db.realm;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;

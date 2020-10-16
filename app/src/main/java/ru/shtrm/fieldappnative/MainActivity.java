@@ -31,13 +31,11 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import ru.shtrm.fieldappnative.db.realm.Channel;
 import ru.shtrm.fieldappnative.db.realm.MeasuredValue;
 import ru.shtrm.fieldappnative.fragments.ChannelsFragment;
 import ru.shtrm.fieldappnative.fragments.SettingsFragment;
